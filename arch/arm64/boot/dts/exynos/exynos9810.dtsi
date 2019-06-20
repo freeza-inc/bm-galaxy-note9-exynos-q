@@ -782,10 +782,12 @@
 		#cooling-cells = <2>; /* min followed by max */
 		governor = "interactive";
 		interactive_info = <338000 94 0>;
-		gpu_dvfs_table_size = <6 7>; /*<row col>*/
-		gpu_dvfs_table = <  572000    78  100   5  1794000  1950000      0
+		gpu_dvfs_table_size = <8 7>; /*<row col>*/
+		gpu_dvfs_table = <  598000    78  100   5  1794000  1950000      0
+		                    572000    78  100   5  1794000  1950000      0
 		                    546000    78   99   1  1794000  1950000      0
 		                    455000    78   85   1  1539000  1794000      0
+		                    385000    78   85   1  1352000  1456000      0
 		                    338000    78   85   1  1352000  1248000      0
 		                    299000    78   85   1  1014000        0      0
 		                    260000    78   85   1   676000        0      0 >;
@@ -793,8 +795,8 @@
 		gpu_pmqos_cpu_cluster_num = <2>;
 		gpu_pmu_status_reg_offset = <0x4044>;
 		gpu_pmu_status_local_pwr_mask = <0xF>; /*0xF << 0*/
-		gpu_max_clock = <572000>;
-		gpu_max_clock_limit = <572000>;
+		gpu_max_clock = <598000>;
+		gpu_max_clock_limit = <598000>;
 		gpu_min_clock = <260000>;
 		gpu_dvfs_start_clock = <260000>;
 		gpu_dvfs_bl_config_clock = <260000>;
@@ -816,7 +818,7 @@
 		gpu_dvfs_polling_time = <30>;
 		gpu_pmqos_int_disable = <1>;
 		gpu_pmqos_mif_max_clock = <1794000>;
-		gpu_pmqos_mif_max_clock_base = <572000>;
+		gpu_pmqos_mif_max_clock_base = <598000>;
 		gpu_cl_dvfs_start_base = <455000>;
 		gpu_debug_level = <3>; /*DEBUG(1) INFO(2) WARNING(3) ERROR(4)*/
 		gpu_trace_level = <8>; /*TRACE_ALL*/
@@ -4987,9 +4989,9 @@
 			shared-cpus = "0-3";
 
 			boost_table = < 100 598000 60 715000 30 832000 20 949000 10 1053000 0 >;
-			up_rate_limit_table = < 5 >;
+			up_rate_limit_ztable = < 5 >;
 			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 80 >;
+			upscale_ratio_table = < 80 1248000 90 >;
 		};
 		domain@1 {
 			device_type = "freqvar-tune";
@@ -4998,7 +5000,7 @@
 			boost_table = < 20 858000 15 962000 5 1261000 0 >;
 			up_rate_limit_table = < 5 >;
 			down_rate_limit_table = < 5 >;
-			upscale_ratio_table = < 50 962000 65 >;
+			upscale_ratio_table = < 55 962000 65 1261000 80 >;
 		};
 	};
 
@@ -5023,9 +5025,9 @@
 		skip_lit_enabled = <0>;
 		cl_busy_ratio = <65>;
 		/* single_freq is parsed from ECT */
-		dual_freq = <2314000>;
-		triple_freq = <1794000>;
-		quad_freq = <1794000>;
+		dual_freq = <2496000>;
+		triple_freq = <2106000>;
+		quad_freq = <2106000>;
 		cal-id = <ACPM_DVFS_CPUCL1>;
 	};
 
@@ -5080,7 +5082,7 @@
 					  2652000 1794000
 					  2496000 1794000
 					  2314000 1794000
-					  2158000 1794000
+					  2106000 1794000
 					  2002000 1794000
 					  1924000 1794000
 					  1794000 1794000
@@ -5107,7 +5109,7 @@
 					  2652000 1794000
 					  2496000 1794000
 					  2314000 1794000
-					  2158000 1794000
+					  2106000 1794000
 					  2002000 1794000
 					  1924000 1794000
 					  1794000 1794000
@@ -5148,7 +5150,8 @@
 					const-type = <CONSTRAINT_MIN>;
 					dm-type = <DM_MIF>;
 						/*  cpu     mif  */
-					table = < 1950000  845000
+					table = < 2002000  845000
+						  1950000  845000
 						  1794000  845000
 						  1690000  845000
 						  1456000  676000
@@ -5192,7 +5195,8 @@
 					const-type = <CONSTRAINT_MIN>;
 					dm-type = <DM_MIF>;
 						/*  cpu     mif  */
-					table = < 2886000 1794000
+					table = < 2964000 1794000
+						  2886000 1794000
 						  2860000 1794000
 						  2704000 1794000
 						  2652000 1794000
