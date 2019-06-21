@@ -320,12 +320,12 @@ static ssize_t sec_reset_auto_summary_proc_read(struct file *file, char __user *
 		pr_err("%s : buffer is null\n", __func__);
 		return -ENODEV;
 	}
-
+#ifdef CONFIG_SEC_DEBUG_RESET_REASON
 	if (reset_reason >= RR_R && reset_reason <= RR_N) {
 		pr_err("%s : reset_reason %d\n", __func__, reset_reason);
 		return -ENOENT;
 	}
-
+#endif
 	if (pos >= AUTO_SUMMARY_SIZE) {
 		pr_err("%s : pos 0x%llx\n", __func__, pos);
 		return -ENOENT;

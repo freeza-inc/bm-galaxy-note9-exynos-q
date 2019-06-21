@@ -14,7 +14,9 @@
 #include <linux/uaccess.h>
 #include <linux/proc_fs.h>
 #include <linux/kmsg_dump.h>
+#ifdef CONFIG_KALLSYMS
 #include <linux/kallsyms.h>
+#endif
 #include <linux/kernel_stat.h>
 #include <linux/irq.h>
 #include <linux/tick.h>
@@ -676,8 +678,9 @@ static void sec_debug_init_base_buffer(unsigned long base, unsigned long size)
 		sec_debug_info->magic[1] = SEC_DEBUG_SHARED_MAGIC1;
 		sec_debug_info->magic[2] = SEC_DEBUG_SHARED_MAGIC2;
 		sec_debug_info->magic[3] = SEC_DEBUG_SHARED_MAGIC3;
-
+#ifdef CONFIG_SEC_AVC_LOG
 		sec_debug_set_kallsyms_info(&(sec_debug_info->ksyms), SEC_DEBUG_SHARED_MAGIC1);
+#endif
 
 #ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 		sec_debug_init_extra_info(sec_debug_info, magic_status);
@@ -1133,9 +1136,9 @@ int sec_debug_summary_init(void)
 	summary_info->magic[1] = SEC_DEBUG_SUMMARY_MAGIC1;
 	summary_info->magic[2] = SEC_DEBUG_SUMMARY_MAGIC2;
 	summary_info->magic[3] = SEC_DEBUG_SUMMARY_MAGIC3;
-
+#ifdef CONFIG_KALLSYMS
 	sec_debug_set_kallsyms_info(&(summary_info->ksyms), SEC_DEBUG_SUMMARY_MAGIC1);
-
+#endif
 	pr_debug("%s done [%d]\n", __func__, offset);
 
 	return 0;

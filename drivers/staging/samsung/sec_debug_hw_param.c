@@ -283,7 +283,7 @@ static ssize_t sec_hw_param_ddr_info_show(struct kobject *kobj,
 
 	return info_size;
 }
-
+#ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 static ssize_t sec_hw_param_extra_info_show(struct kobject *kobj,
 					    struct kobj_attribute *attr, char *buf)
 {
@@ -358,7 +358,7 @@ static ssize_t sec_hw_param_extrf_info_show(struct kobject *kobj,
 
 	return info_size;
 }
-
+#endif
 static ssize_t sec_hw_param_pcb_info_store(struct kobject *kobj,
 					   struct kobj_attribute *attr,
 					   const char *buf, size_t count)
@@ -405,7 +405,7 @@ static struct kobj_attribute sec_hw_param_ap_info_attr =
 
 static struct kobj_attribute sec_hw_param_ddr_info_attr =
 	__ATTR(ddr_info, 0440, sec_hw_param_ddr_info_show, NULL);
-
+#ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 static struct kobj_attribute sec_hw_param_extra_info_attr =
 	__ATTR(extra_info, 0440, sec_hw_param_extra_info_show, NULL);
 
@@ -420,7 +420,7 @@ static struct kobj_attribute sec_hw_param_extrm_info_attr =
 
 static struct kobj_attribute sec_hw_param_extrf_info_attr =
 	__ATTR(extrf_info, 0440, sec_hw_param_extrf_info_show, NULL);
-
+#endif
 static struct kobj_attribute sec_hw_param_pcb_info_attr =
 	__ATTR(pcb_info, 0660, NULL, sec_hw_param_pcb_info_store);
 
@@ -433,11 +433,13 @@ static struct kobj_attribute sec_hw_param_thermal_info_attr =
 static struct attribute *sec_hw_param_attributes[] = {
 	&sec_hw_param_ap_info_attr.attr,
 	&sec_hw_param_ddr_info_attr.attr,
+#ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 	&sec_hw_param_extra_info_attr.attr,
 	&sec_hw_param_extrb_info_attr.attr,
 	&sec_hw_param_extrc_info_attr.attr,
 	&sec_hw_param_extrm_info_attr.attr,
 	&sec_hw_param_extrf_info_attr.attr,
+#endif
 	&sec_hw_param_pcb_info_attr.attr,
 	&sec_hw_param_smd_info_attr.attr,
 	&sec_hw_param_thermal_info_attr.attr,
