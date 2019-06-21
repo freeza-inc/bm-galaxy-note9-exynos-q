@@ -10,6 +10,16 @@
  * published by the Free Software Foundation.
  */
 
+ #ifdef CONFIG_WAKE_GESTURES
+#include <linux/kernel.h>
+#include <linux/wake_gestures.h>
+static bool is_suspended;
+bool scr_suspended(void)
+{
+	return is_suspended;
+}
+#endif
+ 
 struct sec_ts_data *tsp_info;
 
 #include "sec_ts.h"
@@ -661,7 +671,7 @@ static int sec_ts_read_from_sponge(struct sec_ts_data *ts, u8 *data, int len)
 	return ret;
 }
 
-#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE)
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 #include <linux/sec_debug.h>
 extern struct tsp_dump_callbacks dump_callbacks;
 static struct delayed_work *p_ghost_check;
@@ -1300,6 +1310,12 @@ static void sec_ts_read_event(struct sec_ts_data *ts)
 						input_report_key(ts->input_dev, BTN_TOUCH, 1);
 						input_report_key(ts->input_dev, BTN_TOOL_FINGER, 1);
 
+#ifdef CONFIG_WAKE_GESTURES
+						if (is_suspended)
+							ts->coord[t_id].x += 5000;
+#endif
+
+						
 						input_report_abs(ts->input_dev, ABS_MT_POSITION_X, ts->coord[t_id].x);
 						input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, ts->coord[t_id].y);
 						input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, ts->coord[t_id].major);
@@ -2502,7 +2518,7 @@ static int sec_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	/* check evt info */
 	sec_ts_read_evt_info(ts);
 
-#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE)
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 	dump_callbacks.inform_dump = dump_tsp_log;
 	INIT_DELAYED_WORK(&ts->ghost_check, sec_ts_check_rawdata);
 	p_ghost_check = &ts->ghost_check;
@@ -2565,7 +2581,7 @@ error_allocate_pdata:
 	if (ret == -ECONNREFUSED)
 		sec_ts_delay(100);
 	ret = -ENODEV;
-#ifdef CONFIG_TOUCHSCREEN_DUMP_MODE
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 	p_ghost_check = NULL;
 #endif
 	ts_dup = NULL;
@@ -3059,6 +3075,10 @@ static int sec_ts_input_open(struct input_dev *dev)
 	char addr[3] = { 0 };
 	int ret;
 
+#ifdef CONFIG_WAKE_GESTURES
+	is_suspended = false;
+#endif
+
 	if (!ts->info_work_done) {
 		input_err(true, &ts->client->dev, "%s not finished info work\n", __func__);
 		return 0;
@@ -3092,6 +3112,11 @@ static int sec_ts_input_open(struct input_dev *dev)
 #ifdef USE_RESET_EXIT_LPM
 		schedule_delayed_work(&ts->reset_work, msecs_to_jiffies(TOUCH_RESET_DWORK_TIME));
 #else
+#ifdef CONFIG_WAKE_GESTURES
+		if (s2w_switch || dt2w_switch)
+			disable_irq_wake(ts->client->irq);
+		else
+#endif
 		sec_ts_set_lowpowermode(ts, TO_TOUCH_MODE);
 #endif
 	} else {
@@ -3126,6 +3151,17 @@ static int sec_ts_input_open(struct input_dev *dev)
 
 	mutex_unlock(&ts->modechange);
 
+#ifdef CONFIG_WAKE_GESTURES
+	if (dt2w_switch_changed) {
+		dt2w_switch = dt2w_switch_temp;
+		dt2w_switch_changed = false;
+	}
+	if (s2w_switch_changed) {
+		s2w_switch = s2w_switch_temp;
+		s2w_switch_changed = false;
+	}
+#endif
+
 #ifdef CONFIG_SEC_FACTORY
 	check_panel_id(ts);
 #endif
@@ -3149,6 +3185,10 @@ static void sec_ts_input_close(struct input_dev *dev)
 	struct timeval current_time;
 	int ret;
 	u8 data[6] = {SEC_TS_CMD_SPONGE_OFFSET_UTC, 0};
+
+#ifdef CONFIG_WAKE_GESTURES
+	is_suspended = true;
+#endif
 
 	if (!ts->info_work_done) {
 		input_err(true, &ts->client->dev, "%s not finished info work\n", __func__);
@@ -3210,6 +3250,11 @@ static void sec_ts_input_close(struct input_dev *dev)
 
 	ts->pressure_setting_mode = 0;
 
+#ifdef CONFIG_WAKE_GESTURES
+		if (s2w_switch || dt2w_switch)
+			enable_irq_wake(ts->client->irq);
+		else
+#endif
 	if (ts->prox_power_off) {
 		sec_ts_stop_device(ts);
 	} else {
@@ -3272,7 +3317,7 @@ static int sec_ts_remove(struct i2c_client *client)
 
 	sec_ts_fn_remove(ts);
 
-#ifdef CONFIG_TOUCHSCREEN_DUMP_MODE
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 	p_ghost_check = NULL;
 #endif
 	device_init_wakeup(&client->dev, false);
