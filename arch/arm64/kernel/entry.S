@@ -448,10 +448,12 @@ END(vectors)
 	stp	x0, x1, [sp, #-0x20]!
 	stp	x2, x3, [sp,#0x10]
 
+#ifdef CONFIG_SEC_DEBUG
 	/* check sj locked */
 	ldr_l	x0, __debug_sj_lock
 	cmp	x0, #0
 	b.ne	3f
+#endif
 
 	/* check if core is big */
 	mrs	x0, MIDR_EL1

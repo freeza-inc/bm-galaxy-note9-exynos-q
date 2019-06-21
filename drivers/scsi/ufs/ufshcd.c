@@ -37,7 +37,9 @@
  * license terms, and distributes only under these terms.
  */
 
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 
 #include <linux/async.h>
 #if defined(CONFIG_PM_DEVFREQ)

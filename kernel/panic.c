@@ -199,7 +199,7 @@ void panic(const char *fmt, ...)
 	if (buf[strlen(buf) - 1] == '\n')
 		buf[strlen(buf) - 1] = '\0';
 #endif
-#ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
+#ifdef CONFIG_SEC_DEBUG_LAST_KMSG
 	if (strncmp(buf, "Fatal exception", 15))
 		sec_debug_set_extra_info_fault(PANIC_FAULT, (unsigned long)regs.pc, &regs);
 #endif
@@ -268,8 +268,9 @@ void panic(const char *fmt, ...)
 	printk_nmi_flush_on_panic();
 	kmsg_dump(KMSG_DUMP_PANIC);
 
+#ifdef CONFIG_SEC_DEBUG
 	exynos_ss_post_panic();
-
+#endif
 	/*
 	 * If you doubt kdump always works fine in any situation,
 	 * "crash_kexec_post_notifiers" offers you a chance to run

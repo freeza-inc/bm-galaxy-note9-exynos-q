@@ -87,7 +87,9 @@
 #include <asm/paravirt.h>
 #endif
 
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 
 #include "sched.h"
 #include "../workqueue_internal.h"

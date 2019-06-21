@@ -31,7 +31,9 @@
 #if defined(CONFIG_CHARGER_MAX77705_OTG_LIMIT)
 #include <linux/pm_qos.h>
 #endif
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 
 #define ENABLE 1
 #define DISABLE 0
@@ -2479,7 +2481,9 @@ static int max77705_charger_probe(struct platform_device *pdev)
 		       __func__, charger->irq_batp, ret);
 
 #if defined(CONFIG_MAX77705_CHECK_B2SOVRC)
+#ifdef CONFIG_SEC_DEBUG
 	if ((sec_debug_get_debug_level() & 0x1) == 0x1) {
+#endif
 		/* only work for debug level is mid */
 		charger->irq_bat = pdata->irq_base + MAX77705_CHG_IRQ_BAT_I;
 		ret = request_threaded_irq(charger->irq_bat, NULL,
@@ -2487,9 +2491,10 @@ static int max77705_charger_probe(struct platform_device *pdev)
 		if (ret < 0)
 			pr_err("%s: fail to request Battery IRQ: %d: %d\n",
 				   __func__, charger->irq_bat, ret);
+#ifdef CONFIG_SEC_DEBUG
 	}
 #endif
-
+#endif
 	if (charger->enable_sysovlo_irq) {
 		wake_lock_init(&charger->sysovlo_wake_lock, WAKE_LOCK_SUSPEND,
 			       "max77705-sysovlo");

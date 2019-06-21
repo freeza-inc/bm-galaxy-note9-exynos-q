@@ -24,7 +24,7 @@
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CRASH_KEY
 #include <linux/gpio_keys.h>
 #endif
-#ifdef CONFIG_TOUCHSCREEN_DUMP_MODE
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 struct tsp_dump_callbacks dump_callbacks;
 #endif
 
@@ -375,6 +375,7 @@ int exynos_ss_prepare_panic(void)
 }
 EXPORT_SYMBOL(exynos_ss_prepare_panic);
 
+#ifdef CONFIG_SEC_DEBUG
 int exynos_ss_post_panic(void)
 {
 	if (ess_base.enabled) {
@@ -401,9 +402,7 @@ int exynos_ss_post_panic(void)
 		}
 #endif
 	}
-#ifdef CONFIG_SEC_DEBUG
 	sec_debug_post_panic_handler();
-#endif
 #ifdef CONFIG_EXYNOS_SNAPSHOT_PANIC_REBOOT
 	arm_pm_restart(0, "panic");
 #endif
@@ -419,6 +418,7 @@ loop:
 	return 0;
 }
 EXPORT_SYMBOL(exynos_ss_post_panic);
+#endif
 
 int exynos_ss_dump_panic(char *str, size_t len)
 {
@@ -434,6 +434,7 @@ int exynos_ss_dump_panic(char *str, size_t len)
 }
 EXPORT_SYMBOL(exynos_ss_dump_panic);
 
+#ifdef CONFIG_SEC_DEBUG
 int exynos_ss_post_reboot(char *cmd)
 {
 	int cpu;
@@ -456,6 +457,7 @@ int exynos_ss_post_reboot(char *cmd)
 	return 0;
 }
 EXPORT_SYMBOL(exynos_ss_post_reboot);
+#endif
 
 void exynos_ss_save_system(void *unused)
 {
@@ -536,6 +538,7 @@ void exynos_ss_save_system(void *unused)
 #endif
 }
 
+#ifdef CONFIG_SEC_DEBUG
 int exynos_ss_dump(void)
 {
 	/*
@@ -700,6 +703,7 @@ int exynos_ss_dump(void)
 	return 0;
 }
 EXPORT_SYMBOL(exynos_ss_dump);
+#endif
 
 static int exynos_ss_save_core_safe(struct pt_regs *regs, int cpu)
 {
@@ -770,6 +774,7 @@ int exynos_ss_save_core(void *v_regs)
 }
 EXPORT_SYMBOL(exynos_ss_save_core);
 
+#ifdef CONFIG_SEC_DEBUG
 int exynos_ss_save_context(void *v_regs)
 {
 	int cpu;
@@ -799,6 +804,7 @@ int exynos_ss_save_context(void *v_regs)
 	return 0;
 }
 EXPORT_SYMBOL(exynos_ss_save_context);
+#endif
 
 static void exynos_ss_dump_one_task_info(struct task_struct *tsk, bool is_main)
 {
@@ -927,7 +933,7 @@ static int exynos_ss_check_crash_key(struct notifier_block *nb,
 				}
 			}
 		}
-#ifdef CONFIG_TOUCHSCREEN_DUMP_MODE
+#if defined(CONFIG_TOUCHSCREEN_DUMP_MODE) && (CONFIG_SEC_DEBUG)
 		/* dump TSP rawdata
 		 * Hold volume up key first
 		 * and then press home key or intelligence key twice

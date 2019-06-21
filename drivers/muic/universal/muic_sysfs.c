@@ -29,7 +29,9 @@
 #include <linux/delay.h>
 #include <linux/host_notify.h>
 #include <linux/string.h>
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 #include <linux/sec_ext.h>
 
 #include <linux/muic/muic.h>

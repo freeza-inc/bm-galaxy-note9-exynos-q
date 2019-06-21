@@ -34,7 +34,10 @@
 #include <linux/spinlock.h>
 
 #include <linux/sec_sysfs.h>
+
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 
 struct device *sec_key;
 EXPORT_SYMBOL(sec_key);

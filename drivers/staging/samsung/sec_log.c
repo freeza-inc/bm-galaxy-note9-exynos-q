@@ -20,7 +20,10 @@
 #ifdef CONFIG_NO_BOOTMEM
 #include <linux/memblock.h>
 #endif
+
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
 
 #ifdef CONFIG_KNOX_KAP
 extern int boot_mode_security;

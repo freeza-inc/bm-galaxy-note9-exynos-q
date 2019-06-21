@@ -14,7 +14,11 @@
  */
 #include "ssp.h"
 #include <linux/fs.h>
+
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+
 #include <linux/iio/iio.h>
 #include <linux/iio/buffer.h>
 

@@ -52,7 +52,10 @@
 #include <linux/usb_notify.h>
 #endif
 
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+
 #include <linux/sec_ext.h>
 #include <linux/sec_batt.h>
 

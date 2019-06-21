@@ -410,9 +410,9 @@ static int __die(const char *str, int err, struct pt_regs *regs)
 
 		dump_instr(KERN_EMERG, regs);
 	}
-
+#ifdef CONFIG_SEC_DEBUG
 	print_ppmpu_protection(regs);
-
+#endif
 	return ret;
 }
 

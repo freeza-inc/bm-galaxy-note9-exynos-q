@@ -16,7 +16,11 @@
 #ifdef CONFIG_OF
 #include <linux/of_gpio.h>
 #endif
+
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+
 #include <linux/sec_batt.h>
 
 #define DEBUG
