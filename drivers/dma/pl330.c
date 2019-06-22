@@ -1082,7 +1082,6 @@ static void _stop(struct pl330_thread *thrd)
 		writel(1 << thrd->ev, regs + INTCLR);
 	/* Stop generating interrupts for SEV */
 	writel(inten & ~(1 << thrd->ev), regs + INTEN);
-	writel(1 << thrd->ev, regs + INTCLR);
 }
 
 /* Start doing req 'idx' of thread 'thrd' */
