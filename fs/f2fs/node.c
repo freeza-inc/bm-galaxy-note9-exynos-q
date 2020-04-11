@@ -1432,7 +1432,7 @@ iput_out:
 
 static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
 {
-	pgoff_t index;
+	pgoff_t index = 0, end = ULONG_MAX;
 	struct pagevec pvec;
 	struct page *last_page = NULL;
 	int nr_pages;
@@ -1441,7 +1441,9 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
 	index = 0;
 
 	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-				PAGECACHE_TAG_DIRTY))) {
+				PAGECACHE_TAG_WRITEBACK,
+				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1))) {
+
 		int i;
 
 		for (i = 0; i < nr_pages; i++) {
@@ -1638,7 +1640,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
 			struct writeback_control *wbc, bool atomic,
 			unsigned int *seq_id)
 {
-	pgoff_t index;
+	pgoff_t index, end;
 	struct pagevec pvec;
 	int ret = 0;
 	struct page *last_page = NULL;
@@ -1657,7 +1659,8 @@ retry:
 	index = 0;
 
 	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-				PAGECACHE_TAG_DIRTY))) {
+				PAGECACHE_TAG_DIRTY,
+				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1))) {
 		int i;
 
 		for (i = 0; i < nr_pages; i++) {
@@ -1757,7 +1760,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
 				struct writeback_control *wbc,
 				bool do_balance, enum iostat_type io_type)
 {
-	pgoff_t index;
+	pgoff_t index = 0, end = ULONG_MAX;
 	struct pagevec pvec;
 	int step = 0;
 	int nwritten = 0;
@@ -1769,8 +1772,9 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
 next_step:
 	index = 0;
 
-	while (!done && (nr_pages = pagevec_lookup_tag(&pvec,
-			NODE_MAPPING(sbi), &index, PAGECACHE_TAG_DIRTY))) {
+	while (!done && (nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+				PAGECACHE_TAG_WRITEBACK,
+				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1))) {
 		int i;
 
 		for (i = 0; i < nr_pages; i++) {
