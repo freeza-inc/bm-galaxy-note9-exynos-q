@@ -598,6 +598,7 @@ static int kbasep_trace_debugfs_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
+#ifdef CONFIG_MALI_MIDGARD_ENABLE_TRACE
 /* MALI_SEC_INTEGRATIONS : REMOVE STATIC */
 const struct file_operations kbasep_trace_debugfs_fops = {
 	.owner = THIS_MODULE,
@@ -622,6 +623,7 @@ void kbasep_trace_debugfs_init(struct kbase_device *kbdev)
 {
 }
 #endif				/* CONFIG_DEBUG_FS */
+#endif
 
 #else				/* KBASE_TRACE_ENABLE  */
 static int kbasep_trace_init(struct kbase_device *kbdev)

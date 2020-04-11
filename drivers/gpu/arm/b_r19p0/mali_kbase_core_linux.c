@@ -3773,7 +3773,8 @@ static int kbase_device_debugfs_init(struct kbase_device *kbdev)
 #ifdef MALI_SEC_INTEGRATION
 	kbdev->debugfs_ctx_directory = debugfs_create_dir("ctx",
 			kbdev->mali_debugfs_directory);
-#else
+#endif
+#ifdef CONFIG_MALI_MIDGARD_ENABLE_TRACE
 	kbdev->trace_dentry = debugfs_create_file("mali_trace", S_IRUGO,
 			kbdev->mali_debugfs_directory, kbdev,
 			&kbasep_trace_debugfs_fops);

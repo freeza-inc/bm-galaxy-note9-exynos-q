@@ -247,9 +247,11 @@ static int gpu_dvfs_update_config_data_from_dt(struct kbase_device *kbdev)
 	struct device_node *np = kbdev->dev->of_node;
 	struct exynos_context *platform = (struct exynos_context *) kbdev->platform_context;
 
+#ifdef CONFIG_MALI_EXYNOS_TRACE
 	gpu_update_config_data_int(np, "gpu_debug_level", &gpu_debug_level);
 	gpu_update_config_data_int(np, "gpu_trace_level", &gpu_trace_level);
 	gpu_set_trace_level(gpu_trace_level);
+#endif
 
 #ifdef CONFIG_MALI_DVFS
 	gpu_update_config_data_int(np, "g3d_cmu_cal_id", &platform->g3d_cmu_cal_id);
