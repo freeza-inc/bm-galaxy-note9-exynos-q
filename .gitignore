@@ -123,3 +123,9 @@ all.config
 
 # fetched Android config fragments
 kernel/configs/android-*.cfg
+/scripts/crypto/__pycache__/ELF.cpython-38.pyc
+/scripts/crypto/__pycache__/IntegrityRoutine.cpython-38.pyc
+/scripts/crypto/__pycache__/Utils.cpython-38.pyc
+/scripts/fmp/__pycache__/ELF.cpython-38.pyc
+/scripts/fmp/__pycache__/IntegrityRoutine.cpython-38.pyc
+/scripts/fmp/__pycache__/Utils.cpython-38.pyc
