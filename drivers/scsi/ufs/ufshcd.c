@@ -2316,8 +2316,18 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
 	struct completion wait;
 	unsigned long flags;
 
-	if (!ufshcd_is_link_active(hba))
-		return -EPERM;
+	ktime_t start = ktime_get();
+
+	/*
+	 * Add timeout to ensure link actvie status.
+	 * There is a case where link activity takes
+	 * a long time during tw control.
+	 */
+	while (!ufshcd_is_link_active(hba)) {
+		if (ktime_to_us(ktime_sub(ktime_get(), start)) > 50000)
+			return -EPERM;
+		usleep_range(200, 400);
+	}
 
 	/*
 	 * Get free slot, sleep if slots are unavailable.
